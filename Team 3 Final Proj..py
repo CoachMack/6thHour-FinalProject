@@ -1,4 +1,4 @@
-#Names: Logan (The Senior), Evan, Jax
+#Names: Other Logan, Evan, Jax
 #Team: 3
 #Class: 6th Hour
 #Assignment: Final Project
