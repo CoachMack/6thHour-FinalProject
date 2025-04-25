@@ -2,7 +2,6 @@
 #Team: 3
 #Class: 6th Hour
 #Assignment: Final Project
-
 #Scrum Document: https://docs.google.com/document/d/1NkCzVnSlhx4QS75OG5_5bjqvS8heMQ40eHHP9xEZkhI/edit?pli=1&tab=t.0
 
 
