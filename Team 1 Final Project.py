@@ -15,23 +15,27 @@ DealerScore = 0
 PlayerScore = 0
 Deck = []
 BlackJack = 21
-
+chip_pool = 100
+bet = 1
 
 def make_bet():
-    global bet
+    global bet, chip_pool
     bet = 0
+    print(f"You have {chip_pool} chips.")
     print("what amount of chips would you like to bet?")
     while bet == 0:
-        bet_comp = input()
-        bet_comp = int(bet_comp)
+        while True:
+            bet_comp = input()
+            try:
+                bet_comp = int(bet_comp)
+                if bet_comp >= 1 and bet_comp <= chip_pool:
+                    bet = bet_comp
+                    break
+                else:
+                    print("invalid bet, you only have " + str(chip_pool) + " chips remaining")
+            except ValueError:
+                print("Please input a number.")
 
-        if bet_comp >= 1 and bet_comp <= chip_pool:
-            bet = bet_comp
-        else:
-            print("invalid bet, you only have" + str(chip_pool) + "remaining")
-
-
-make_bet()
 # Card class that holds each card's value and name.
 class Card:
     def __init__(self, name, value):
@@ -90,7 +94,7 @@ def passOutCard(CardReceiver):
 
 # This function holds the entire gameplay loop, including hitting, standing, the dealers turn, and winning or losing.
 def Play():
-    global DealerScore, PlayerScore
+    global DealerScore, PlayerScore, bet, chip_pool
     string = []
     for i in PlayerHand:
         string += [i.name]
@@ -146,7 +150,7 @@ def Play():
                     DealerScore += card.value[0]
                 else:
                     DealerScore += card.value[-1]
-        if DealerScore < round(BlackJack / 3.5):
+        if DealerScore < BlackJack - 6:
             DealerScore = 0
             for card in DealerHand:
                 if isinstance(card.value, int):
@@ -177,38 +181,39 @@ def Play():
                     PlayerScore += card.value[0]
                 else:
                     PlayerScore += card.value[-1]
-        print(f"Your total value is: {PlayerScore}")
+        print(f"Your total value is: {PlayerScore}\n")
         if DealerScore > BlackJack:
             DealerScore = 0
         if PlayerScore > BlackJack:
             PlayerScore = 0
         if DealerScore > PlayerScore:
             print("You lose.")
-
             # You lose the amount of money you bet.
-
+            chip_pool -= bet
         elif DealerScore < PlayerScore:
             print("You win!")
             if PlayerScore == BlackJack and len(PlayerHand) == 2:
                 print("You got a BlackJack! You get increased rewards.")
-
                 # You gain more money than you bet, most likely a 1.5 multiplier rounded.
                 # For example (Assuming 'Money' is the amount of money you have and 'BetAmount' is the amount you bet on), Money += round(BetAmount * 1.5)
                 # NOTE: This might not work correctly depending on how you implemented the betting system, this is just a guideline/suggestion.
-
+                chip_pool += round(bet * 1.5)
             else:
-                pass
-
                 # You gain the amount of money you bet.
+                chip_pool += bet
 
         else:
             print("You tied.")
 
             # You neither gain nor lose the money that you bet.
 
-        if input("Would you like to play again? (Yes/No): ").lower() == "yes":
-            return True
+        if chip_pool > 0:
+            print(f"You have {chip_pool} chips.")
+            if input("Would you like to play again? (Yes/No): ").lower() == "no":
+                exit()
+            print("")
         else:
+            print("You ran out of chips. The game is over.")
             exit()
     else:
         print("That is not an option.")
@@ -216,13 +221,8 @@ def Play():
 
 
 # Call the functions to play the game
-resetDeck()
-createHands()
-while Play():
+while True:
+    make_bet()
     resetDeck()
     createHands()
-    # betting system prototype 1
-    chip_pool = 100
-    bet = 1
-
-
+    Play()
